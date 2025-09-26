@@ -1,61 +1,27 @@
-const gradeBook = {
-  courses: [
-    {
-      id: "CS277",
-      name: "Web Development",
-      students: [
-        {
-          id: 1,
-          name: "Maria",
-          assignments: [
-            { name: "Project 1", points: 85, maxPoints: 100 },
-            { name: "Quiz 1", points: 18, maxPoints: 20 },
-          ],
-        },
-        {
-          id: 2,
-          name: "John",
-          assignments: [
-            { name: "Project 1", points: 92, maxPoints: 100 },
-            { name: "Quiz 1", points: 19, maxPoints: 20 },
-          ],
-        },
-      ],
-    },
-  ],
-};
+import COURSES from "./data.js";
+import {
+  getStudentPercentage,
+  getClassAverage,
+  addAssignment,
+} from "./utils.js";
 
-// Calculate percentage for one student
-const getStudentPercentage = (courseId, studentId) => {
-  const foundCourse = gradeBook.courses.find(({ id }) => id === courseId);
-  const foundStudent = foundCourse.students.find(({ id }) => id === studentId);
+// Demo of the functions
+console.log("Maria's percentage:", getStudentPercentage(COURSES, "CS277", 1) + "%");
+console.log("John's percentage:",  getStudentPercentage(COURSES, "CS277", 2) + "%");
+console.log("Class average:",      getClassAverage(COURSES, "CS277") + "%");
 
-  const totalPoints = foundStudent.assignments.reduce(
-    (acc, a) => acc + a.points,
-    0
-  );
-  const totalMaxPoints = foundStudent.assignments.reduce(
-    (acc, a) => acc + a.maxPoints,
-    0
-  );
+// Show immutability by adding a new assignment
+const updatedCourses = addAssignment(COURSES, {
+  courseId: "CS277",
+  name: "Final Exam",
+  maxPoints: 50,
+});
 
-  return Math.round((totalPoints / totalMaxPoints) * 100);
-};
+console.log("\nOriginal courses:");
+console.log(JSON.stringify(COURSES, null, 2));
 
-// Calculate class average across students
-const getClassAverage = (courseId) => {
-  const foundCourse = gradeBook.courses.find(({ id }) => id === courseId);
-  const totalStudents = foundCourse.students.length;
+console.log("\nAfter adding assignment:");
+console.log(JSON.stringify(updatedCourses, null, 2));
 
-  return Math.round(
-    foundCourse.students
-      .map(({ id }) => getStudentPercentage(courseId, id))
-      .reduce((acc, percentage) => acc + percentage, 0) / totalStudents
-  );
-};
-
-// Example usage
-const classAverage = getClassAverage("CS277");
-console.info("Class average:", classAverage);
 
 
