@@ -1,61 +1,54 @@
-const gradeBook = {
-  courses: [
-    {
-      id: "CS277",
-      name: "Web Development",
-      students: [
-        {
-          id: 1,
-          name: "Maria",
-          assignments: [
-            { name: "Project 1", points: 85, maxPoints: 100 },
-            { name: "Quiz 1", points: 18, maxPoints: 20 },
-          ],
-        },
-        {
-          id: 2,
-          name: "John",
-          assignments: [
-            { name: "Project 1", points: 92, maxPoints: 100 },
-            { name: "Quiz 1", points: 19, maxPoints: 20 },
-          ],
-        },
-      ],
-    },
-  ],
-};
+import DATA from "./data.js";
+import {
+  addAssignmentToCourse,
+  getClassAverage,
+  getStudentPercentage,
+  calculateDiscount,
+  formatGrade,
+  isValidScore,
+  generateStudentId,
+  calculateLetterGrade,
+  findTopStudent,
+} from "./utils.js";
 
-// Calculate percentage for one student
-const getStudentPercentage = (courseId, studentId) => {
-  const foundCourse = gradeBook.courses.find(({ id }) => id === courseId);
-  const foundStudent = foundCourse.students.find(({ id }) => id === studentId);
+// Assume only one course in DATA
+const CIS277 = DATA[0];
 
-  const totalPoints = foundStudent.assignments.reduce(
-    (acc, a) => acc + a.points,
-    0
-  );
-  const totalMaxPoints = foundStudent.assignments.reduce(
-    (acc, a) => acc + a.maxPoints,
-    0
-  );
+// Find Maria and John
+const maria = CIS277.students.find((s) => s.name === "Maria");
+const john = CIS277.students.find((s) => s.name === "John");
 
-  return Math.round((totalPoints / totalMaxPoints) * 100);
-};
+console.info(
+  `Maria's percentage: ${getStudentPercentage(CIS277, maria.id)}%`
+);
 
-// Calculate class average across students
-const getClassAverage = (courseId) => {
-  const foundCourse = gradeBook.courses.find(({ id }) => id === courseId);
-  const totalStudents = foundCourse.students.length;
+console.info(
+  `John's percentage: ${getStudentPercentage(CIS277, john.id)}%`
+);
 
-  return Math.round(
-    foundCourse.students
-      .map(({ id }) => getStudentPercentage(courseId, id))
-      .reduce((acc, percentage) => acc + percentage, 0) / totalStudents
-  );
-};
+console.info(`Class average: ${getClassAverage(CIS277)}%`);
 
-// Example usage
-const classAverage = getClassAverage("CS277");
-console.info("Class average:", classAverage);
+// Immutability check
+console.info(
+  "Adding assignment: Shows original vs new data (immutability)"
+);
+const newCourse = addAssignmentToCourse({
+  course: CIS277,
+  assignmentName: "Final Exam",
+  maxPoints: 100,
+});
+
+console.info("Original assignments for Maria:", maria.assignments);
+
+const newMaria = newCourse.students.find((s) => s.name === "Maria");
+console.info("New assignments for Maria:", newMaria.assignments);
+
+// Testing extra utility functions
+console.info("Discounted Price (100, 20%):", calculateDiscount(100, 20));
+console.info("Format Grade (88%):", formatGrade(88));
+console.info("Is Valid Score (15/20):", isValidScore(15, 20));
+console.info("Generated Student ID:", generateStudentId("Jane", "Doe"));
+console.info("Letter Grade (72%):", calculateLetterGrade(72));
+console.info("Top Student:", findTopStudent(CIS277)?.name);
 
 
