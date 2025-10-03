@@ -1,4 +1,3 @@
-`// ========== FROM YOUR PICTURES ==========
 export const addAssignmentToCourse = ({
   course,
   assignmentName,
